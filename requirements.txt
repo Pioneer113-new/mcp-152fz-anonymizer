@@ -1,0 +1,5 @@
+mcp[cli]
+presidio-analyzer
+presidio-anonymizer
+spacy
+faker
