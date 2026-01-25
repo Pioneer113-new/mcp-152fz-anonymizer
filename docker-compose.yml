@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  pd-anonymizer:
+    build: .
+    container_name: pd-anonymizer
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - LOG_LEVEL=INFO
+    # Если будем деплоить через Traefik, раскомментируй лейблы:
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.pd-anon.rule=Host(`anon.your-domain.com`)"
+    #   - "traefik.http.services.pd-anon.loadbalancer.server.port=8000"
+    # networks:
+    #   - traefik_public
+
+# networks:
+#   traefik_public:
+#     external: true
