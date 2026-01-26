@@ -6,7 +6,7 @@ services:
     container_name: pd-anonymizer
     restart: always
     ports:
-      - "8000:8000"
+      - "8005:8000"
     environment:
       - LOG_LEVEL=INFO
     # Если будем деплоить через Traefik, раскомментируй лейблы:
