@@ -1,4 +1,7 @@
-from fastapi import FastAPI, HTTPException
+import os
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Depends, Security, status
+from fastapi.security import APIKeyHeader
 from pydantic import BaseModel
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
@@ -8,6 +11,31 @@ import logging
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("api_server")
+
+# Load environment variables
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
+
+# Define security scheme
+api_key_header = APIKeyHeader(name="X-API-Token", auto_error=False)
+
+
+async def get_api_key(api_key_header: str = Security(api_key_header)):
+    if not API_KEY:
+        # If API_KEY is not set on server, log warning or fail.
+        # For safety, let's fail if auth is required but not configured.
+        logger.error("API_KEY environment variable is not set!")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Server configuration error: API_KEY missing",
+        )
+    if api_key_header == API_KEY:
+        return api_key_header
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or missing API Key",
+    )
+
 
 app = FastAPI(
     title="152-FZ Anonymizer API",
@@ -35,7 +63,7 @@ class AuditResponse(BaseModel):
 
 
 @app.post("/anonymize", response_model=AnonymizeResponse)
-async def anonymize(request: AnonymizeRequest):
+async def anonymize(request: AnonymizeRequest, token: str = Depends(get_api_key)):
     """
     Anonymize input text replacing PII with placeholders.
     """
@@ -91,9 +119,10 @@ async def anonymize(request: AnonymizeRequest):
 
 
 @app.post("/audit", response_model=AuditResponse)
-async def audit(request: AnonymizeRequest):
+async def audit(request: AnonymizeRequest, token: str = Depends(get_api_key)):
     """
     Return detected entities without modifying text.
+    Requires X-API-Token header.
     """
     results = analyzer.analyze(text=request.text, language="ru")
     report = []

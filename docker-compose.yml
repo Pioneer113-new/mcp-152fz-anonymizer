@@ -9,6 +9,7 @@ services:
       - "8005:8000"
     environment:
       - LOG_LEVEL=INFO
+      - API_KEY=change-me-to-something-secure-12345
     # Если будем деплоить через Traefik, раскомментируй лейблы:
     # labels:
     #   - "traefik.enable=true"
