@@ -1,4 +1,7 @@
 import os
+import json
+import logging
+from datetime import datetime
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends, Security, status
 from fastapi.security import APIKeyHeader
@@ -6,7 +9,6 @@ from pydantic import BaseModel
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 from analyzer_setup import create_analyzer_engine
-import logging
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -14,27 +16,58 @@ logger = logging.getLogger("api_server")
 
 # Load environment variables
 load_dotenv()
-API_KEY = os.getenv("API_KEY")
+# Load API keys from JSON file
+API_KEYS_FILE = "api_keys.json"
+api_keys_db = {}
+request_counts = {}
+
+
+def load_api_keys():
+    global api_keys_db
+    try:
+        if os.path.exists(API_KEYS_FILE):
+            with open(API_KEYS_FILE, "r") as f:
+                data = json.load(f)
+                api_keys_db = data.get("keys", {})
+                logger.info(f"Loaded {len(api_keys_db)} API keys.")
+        else:
+            logger.warning(f"{API_KEYS_FILE} not found. Authentication might fail.")
+    except Exception as e:
+        logger.error(f"Failed to load API keys: {e}")
+
+
+# Initial load
+load_api_keys()
 
 # Define security scheme
-api_key_header = APIKeyHeader(name="X-API-Token", auto_error=False)
+api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 
 async def get_api_key(api_key_header: str = Security(api_key_header)):
-    if not API_KEY:
-        # If API_KEY is not set on server, log warning or fail.
-        # For safety, let's fail if auth is required but not configured.
-        logger.error("API_KEY environment variable is not set!")
+    if api_key_header not in api_keys_db:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Server configuration error: API_KEY missing",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid API Key",
         )
-    if api_key_header == API_KEY:
-        return api_key_header
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid or missing API Key",
+
+    user_data = api_keys_db[api_key_header]
+    username = user_data.get("user", "Unknown")
+    limit = user_data.get("limit", 0)
+
+    # Simple in-memory rate limiting (per restart)
+    current_count = request_counts.get(username, 0)
+    if current_count >= limit:
+        logger.warning(f"Rate limit exceeded for user: {username}")
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Rate limit exceeded",
+        )
+
+    request_counts[username] = current_count + 1
+    logger.info(
+        f"Access granted for user: {username} ({request_counts[username]}/{limit})"
     )
+    return api_key_header
 
 
 app = FastAPI(

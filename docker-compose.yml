@@ -5,19 +5,27 @@ services:
     build: .
     container_name: pd-anonymizer
     restart: always
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /home/deploy/.cache:uid=1000,gid=1000
     ports:
       - "8005:8000"
+    volumes:
+      - ./api_keys.json:/app/api_keys.json
     environment:
       - LOG_LEVEL=INFO
-      - API_KEY=change-me-to-something-secure-12345
-    # Если будем деплоить через Traefik, раскомментируй лейблы:
-    # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.http.routers.pd-anon.rule=Host(`anon.your-domain.com`)"
-    #   - "traefik.http.services.pd-anon.loadbalancer.server.port=8000"
-    # networks:
-    #   - traefik_public
-
-# networks:
-#   traefik_public:
-#     external: true
+      # API_KEY больше не используется, так как ключи вынесены в JSON
+      # - API_KEY=...
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024M
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/docs')\""]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 120s

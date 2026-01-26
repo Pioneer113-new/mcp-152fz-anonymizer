@@ -5,3 +5,7 @@ __pycache__/
 .DS_Store
 *.zip
 scratch/
+api_keys.json
+prd.json
+progress.txt
+.DS_Store
