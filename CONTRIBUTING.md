@@ -71,6 +71,6 @@ This section guides you through submitting an enhancement suggestion, including 
 
 ### Python Style
 
-- We try to follow [PEP 8](https://www.python.org/dev/peps/pep-0008/).
+- This project follows [PEP 8](https://www.python.org/dev/peps/pep-0008/).
 - Use descriptive variable names.
 - Add docstrings to public functions and classes.
