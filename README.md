@@ -1,6 +1,6 @@
 # 🇷🇺 152-FZ Data Anonymization MCP Server
 
-![License](https://img.shields.io/github/license/Pioneer113-new/mcp-pd-RF?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square&logo=python)
 ![Docker](https://img.shields.io/badge/docker-supported-2496ED?style=flat-square&logo=docker)
 ![Status](https://img.shields.io/badge/status-active-success?style=flat-square)
