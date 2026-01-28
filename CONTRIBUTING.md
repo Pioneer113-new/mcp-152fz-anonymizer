@@ -1,4 +1,4 @@
-# Contributing to 152-FZ MCP Server
+# Contributing to mcp-152fz-anonymizer
 
 First off, thanks for taking the time to contribute! 🎉
 
@@ -39,8 +39,8 @@ This section guides you through submitting an enhancement suggestion, including 
 1.  Clone the repository:
 
     ```bash
-    git clone https://github.com/Pioneer113-new/mcp-pd-RF.git
-    cd mcp-pd-RF
+    git clone https://github.com/Pioneer113-new/mcp-152fz-anonymizer.git
+    cd mcp-152fz-anonymizer
     ```
 
 2.  Create virtual environment:

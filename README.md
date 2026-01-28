@@ -1,4 +1,4 @@
-# 🇷🇺 152-FZ Data Anonymization MCP Server
+# 🇷🇺 mcp-152fz-anonymizer (Data Anonymization)
 
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square&logo=python)
@@ -6,7 +6,7 @@
 ![Status](https://img.shields.io/badge/status-active-success?style=flat-square)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)
 
-> **Мощный инструмент для автоматического обезличивания персональных данных (ПДн) в соответствии с 152-ФЗ.**
+> **Мощный инструмент для автоматического обезличивания персональных данных (ПД) в соответствии с 152-ФЗ.**
 > Работает локально и в Docker. Идеально для интеграции с n8n, Zapier и LLM-агентами.
 
 ---
@@ -69,8 +69,8 @@ graph LR
 ### 1. Клонирование и настройка
 
 ```bash
-git clone https://github.com/Pioneer113-new/mcp-pd-RF.git
-cd mcp-pd-RF
+git clone https://github.com/Pioneer113-new/mcp-152fz-anonymizer.git
+cd mcp-152fz-anonymizer
 ```
 
 Создайте файл с API ключами (обязательно для защиты):
