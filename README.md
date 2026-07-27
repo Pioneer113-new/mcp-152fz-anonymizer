@@ -69,7 +69,7 @@ graph LR
 ### 1. Клонирование и настройка
 
 ```bash
-git clone https://github.com/Pioneer113-new/mcp-152fz-anonymizer.git
+git clone https://github.com/Pioneer113/mcp-152fz-anonymizer.git
 cd mcp-152fz-anonymizer
 ```
 
